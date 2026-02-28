@@ -1,5 +1,3 @@
-Imports System
-
 Module Program
     'Getting al the Users from the csv file 
     'Dim Users() As String = Files.ReadAllLines("/Users/jonasmuhlbach/Programs_VB/Project_Bib/library_users.csv")
@@ -54,41 +52,65 @@ Module Program
                                 "978-0-596-52067-0,Coding Standards,Benjamin Foster,available|" &
                                 "978-0-13-117705-5,Fundamentals of Computing,Sophia Anderson,available|" 
         Dim Libary() As String = LibaryData.Split("|")
+
     Sub Main(args As String())
-        'The user is given the opportunity to choose from various options
-        Console.Writeline("Please choose on of the options")
-        Console.Writeline("(1) New user") 
-        Console.Writeline("(2) Book variety ") 
-        Console.Writeline("(3) All Users")
-        Console.Writeline("(4) Borrow a book (ISBN)")
-        Console.Writeline("(5) Give Back (ISBN)")
-        Console.Writeline("(6) Borrowed books by user")
-        Console.Writeline("(7) Close")
-        Console.Write("imput: ")
-        'Imput gets read preperation for further steps
-        Dim imput As String = Console.ReadLine()
+        Dim Choice As Integer = 0
+        ' loop until the user chooses to exit (7)
+        Do
+            ' display menu
+            Console.Clear()
+            Console.WriteLine("Please choose one of the options")
+            Console.WriteLine("(1) New user")
+            Console.WriteLine("(2) Book variety")
+            Console.WriteLine("(3) All Users")
+            Console.WriteLine("(4) Borrow a book (ISBN)")
+            Console.WriteLine("(5) Give Back (ISBN)")
+            Console.WriteLine("(6) Borrowed books by user")
+            Console.WriteLine("(7) Close")
+            Console.Write("input: ")
 
-        Select Case imput
-                    Case "1"
-                        Console.Writeline("imput was 1")
-                    Case "2"
-                        For i As Integer = 0 to Libary.Length - 1
-                            Console.WriteLine(Libary(i))
-                        Next
-                    Case "3"
-                        For i As Integer = 0 to Users.Length - 1
-                            Console.WriteLine(Users(i))
-                        Next
-                    Case "4"
-                        Console.Writeline("imput was 4")
-                    Case "5"
-                        Console.Writeline("imput was 5")
-                    Case "6"
-                        Console.Writeline("imput was 6")
-                    Case "7"
-                        Console.Writeline("imput was 7")
-        End Select
+            Dim input As String = Console.ReadLine()
+            If Not Integer.TryParse(input, Choice) Then
+                Console.WriteLine("Invalid input. Please enter a number between 1 and 7.")
+                Pause()
+                'as long as non of the Cases between 1 and 7 is chosen, the console is not going to continue and will ask for a valid input
+                Continue Do
+            End If
 
+            Select Case Choice
+                Case 1
+                    Console.WriteLine("input was 1")
+                Case 2
+                    'display all the books in the library, trough an Intiger loop, that goes trough the array and prints out all the books same as the users in case 3
+                    For i As Integer = 0 To Libary.Length - 1
+                        Console.WriteLine(Libary(i))
+                    Next
+                Case 3
+                    For i As Integer = 0 To Users.Length - 1
+                        Console.WriteLine(Users(i))
+                    Next
+                Case 4
+                    Console.WriteLine("input was 4")
+                Case 5
+                    Console.WriteLine("input was 5")
+                Case 6
+                    Console.WriteLine("input was 6")
+                Case 7
+                    Console.WriteLine("Goodbye!")
+                    ' leave immediately without waiting for key
+                    Exit Sub
+                Case Else
+                    Console.WriteLine("Invalid option. Please enter a number between 1 and 7.")
+            End Select
 
+            If Choice <> 7 Then Pause()
+        Loop While Choice <> 7
+        'Loop will continue until the user chooses to exit with (7)
+    End Sub
+
+    Sub Pause()
+        Console.WriteLine("Press any key to continue...")
+        Console.ReadKey()
+        ' The "Pause" subroutine is used to show the user what he needs to do to loop back to the menu.
     End Sub
 End Module
