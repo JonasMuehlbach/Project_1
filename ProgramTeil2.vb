@@ -79,7 +79,7 @@ Module Program
 
             Select Case Choice
                 Case 1
-                    Console.WriteLine("input was 1")
+                    AddUser()
                 Case 2
                     'display all the books in the library, trough an Intiger loop, that goes trough the array and prints out all the books same as the users in case 3
                     For i As Integer = 0 To Libary.Length - 1
@@ -108,9 +108,54 @@ Module Program
         'Loop will continue until the user chooses to exit with (7)
     End Sub
 
+    'Sub after a Chase walked trough so you can get back to menu
     Sub Pause()
-        Console.WriteLine("Press any key to continue...")
+        Console.WriteLine("Press any key to go back to the menu...")
         Console.ReadKey()
-        ' The "Pause" subroutine is used to show the user what he needs to do to loop back to the menu.
+    End Sub
+
+    ' adds a new user with ID of format UXXX 
+    Sub AddUser()
+        ' check capacity if it below 999 users
+        If Users.Length >= 999 Then
+            Console.WriteLine("To many users. Please contact the libary staff for further assistance :)")
+            Return
+        End If
+
+        Console.Write("First name: ")
+        Dim first As String = Console.ReadLine().Trim()
+        Console.Write("Last name: ")
+        Dim last As String = Console.ReadLine().Trim()
+        If first = "" OrElse last = "" Then
+            Console.WriteLine("First or/and last name cannot be empty.")
+            ' Saftey from empty inputs
+            Return
+        End If
+
+        ' find highest existing numeric ID and using it for new user
+        Dim maxNum As Integer = 0
+        For Each entry As String In Users
+            Dim parts() As String = entry.Split(","c)
+            If parts.Length > 0 AndAlso parts(0).StartsWith("U") Then
+                Dim numStr As String = parts(0).Substring(1)
+                Dim n As Integer
+                If Integer.TryParse(numStr, n) Then
+                    If n > maxNum Then maxNum = n
+                End If
+            End If
+        Next
+
+        Dim newNum As Integer = maxNum + 1
+        If newNum > 999 Then
+            Console.WriteLine("To many users. Please contact the libary staff for further assistance :)")
+            Return
+        End If
+
+        Dim newId As String = "U" & newNum.ToString("D3")
+        Dim newEntry As String = newId & "," & first & " " & last
+        User &= "|" & newEntry
+        Users = User.Split("|"c)
+
+        Console.WriteLine("Added New User: " & newEntry)
     End Sub
 End Module
