@@ -65,13 +65,12 @@ Module Program
             Console.WriteLine("(3) All Users")
             Console.WriteLine("(4) Borrow a book (ISBN)")
             Console.WriteLine("(5) Give Back (ISBN)")
-            Console.WriteLine("(6) Borrowed books by user")
-            Console.WriteLine("(7) Close")
+            Console.WriteLine("(6) Close")
             Console.Write("input: ")
 
             Dim input As String = Console.ReadLine()
             If Not Integer.TryParse(input, Choice) Then
-                Console.WriteLine("Invalid input. Please enter a number between 1 and 7.")
+                Console.WriteLine("Invalid input. Please enter a number between 1 and 6.")
                 Pause()
                 'as long as non of the Cases between 1 and 7 is chosen, the console is not going to continue and will ask for a valid input
                 Continue Do
@@ -90,12 +89,10 @@ Module Program
                         Console.WriteLine(Users(i))
                     Next
                 Case 4
-                    Console.WriteLine("input was 4")
+                    BorrowBook()
                 Case 5
                     Console.WriteLine("input was 5")
                 Case 6
-                    Console.WriteLine("input was 6")
-                Case 7
                     Console.WriteLine("Goodbye!")
                     ' leave immediately without waiting for key
                     Exit Sub
@@ -103,12 +100,12 @@ Module Program
                     Console.WriteLine("Invalid option. Please enter a number between 1 and 7.")
             End Select
 
-            If Choice <> 7 Then Pause()
-        Loop While Choice <> 7
-        'Loop will continue until the user chooses to exit with (7)
+            If Choice <> 6 Then Pause()
+        Loop While Choice <> 6
+        'Loop will continue until the user chooses to exit with (6)
     End Sub
 
-    'Sub after a Chase walked trough so you can get back to menu
+    'Sub after a Chase walked trough  to get back to menu
     Sub Pause()
         Console.WriteLine("Press any key to go back to the menu...")
         Console.ReadKey()
@@ -158,4 +155,56 @@ Module Program
 
         Console.WriteLine("Added New User: " & newEntry)
     End Sub
+
+    ' A Sub for Borrowing a book, over the ISBN and the User ID
+    Sub BorrowBook()
+        Console.Write("ISBN: ")
+        Dim isbn As String = Console.ReadLine()
+        Console.Write("User ID (Imput with U): ")
+        Dim userId As String = Console.ReadLine()
+
+        ' checks if user even exists, if not return to the menu
+        Dim userEntry As String = Users.FirstOrDefault(Function(u) u.StartsWith(userId & ","))
+        If userEntry Is Nothing Then
+            Console.WriteLine("User ID not found.")
+            Return
+        End If
+        Dim userName As String = ""
+        Dim userParts() As String = userEntry.Split(","c)
+        If userParts.Length > 1 Then userName = userParts(1)
+
+        ' find book over the ISBN, if not back to menu
+        Dim bookIndex As Integer = -1
+        For i As Integer = 0 To Libary.Length - 1
+            Dim parts() As String = Libary(i).Split(","c)
+            If parts.Length >= 4 AndAlso parts(0) = isbn Then
+                bookIndex = i
+                Exit For
+            End If
+        Next
+        If bookIndex = -1 Then
+            Console.WriteLine("ISBN not found in library.")
+            Return
+        End If
+
+        Dim bookParts() As String = Libary(bookIndex).Split(","c)
+        If bookParts.Length < 4 Then
+            Console.WriteLine("Invalid book record.")
+            Return
+        End If
+
+        If Not bookParts(3).Equals("available", StringComparison.OrdinalIgnoreCase) Then
+            Console.WriteLine("Book is not available for lending. for further information please contact the libary staff, thank you :-)")
+            Return
+        End If
+
+        ' mark as lent in LibaryData 
+        bookParts(3) = "lend"
+        Libary(bookIndex) = String.Join(",", bookParts)
+        LibaryData = String.Join("|", Libary)
+
+        Console.WriteLine($"Book '{bookParts(1)}' (ISBN {isbn}) has been lent to {userName} ({userId}).")
+    End Sub
+
+    
 End Module
