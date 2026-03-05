@@ -91,7 +91,7 @@ Module Program
                 Case 4
                     BorrowBook()
                 Case 5
-                    Console.WriteLine("input was 5")
+                    ReturnBook()
                 Case 6
                     Console.WriteLine("Goodbye!")
                     ' leave immediately without waiting for key
@@ -204,7 +204,45 @@ Module Program
         LibaryData = String.Join("|", Libary)
 
         Console.WriteLine($"Book '{bookParts(1)}' (ISBN {isbn}) has been lent to {userName} ({userId}).")
+        'Question should i implement a abillity that it is showing me all the books so it i easyier to type the ISBN
+
     End Sub
 
-    
+    Sub returnBook()
+        Console.Write("ISBN: ")
+        Dim isbn As String = Console.ReadLine()
+
+        ' find book over the ISBN, if not back to menu
+        Dim bookIndex As Integer = -1
+        For i As Integer = 0 To Libary.Length - 1
+            Dim parts() As String = Libary(i).Split(","c)
+            If parts.Length >= 4 AndAlso parts(0) = isbn Then
+                bookIndex = i
+                Exit For
+            End If
+        Next
+        If bookIndex = -1 Then
+            Console.WriteLine("ISBN not found in library.")
+            Return
+        End If
+
+        Dim bookParts() As String = Libary(bookIndex).Split(","c)
+        If bookParts.Length < 4 Then
+            Console.WriteLine("Invalid book record.")
+            Return
+        End If
+
+        If Not bookParts(3).Equals("lend", StringComparison.OrdinalIgnoreCase) Then
+            Console.WriteLine("Book is not currently lent out.")
+            Return
+        End If
+
+        ' mark as available in LibaryData 
+        bookParts(3) = "available"
+        Libary(bookIndex) = String.Join(",", bookParts)
+        LibaryData = String.Join("|", Libary)
+
+        Console.WriteLine($"Book '{bookParts(1)}' (ISBN {isbn}) has been returned and is now available.")
+    End Sub
+
 End Module
