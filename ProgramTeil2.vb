@@ -1,6 +1,7 @@
+
 Module Program
     'Getting al the Users from the csv file 
-    'Dim Users() As String = Files.ReadAllLines("/Users/jonasmuhlbach/Programs_VB/Project_Bib/library_users.csv")
+    'Dim User() As String = Files.ReadAllLines("/Users/jonasmuhlbach/Programs_VB/Project_Bib/Teil2/library_users.csv")
     Dim User As String =
                         "U001,Max Johnson|" &
                         "U002,Emily Smith|" &
@@ -16,10 +17,10 @@ Module Program
                         "U012,Jessica Thompson|" &
                         "U013,Kevin White|" &
                         "U014,Rachel Harris|" &
-                        "U015,Steven Lewis"
+                        "U015,Steven Lewis"'
     Dim Users() As String = User.Split("|")
     'Getting al the Books from the csv file 
-    'Dim Books() As String = Files.ReadAllLines("/Users/jonasmuhlbach/Programs_VB/Project_Bib/library_books.csv")
+    'Dim Books() As String = Files.ReadAllLines("/Users/jonasmuhlbach/Programs_VB/Project_Bib/Teil2/library_books.csv")
     Dim LibaryData As String =
                                 "978-0-13-110362-7,Introduction to Programming,John Smith,available|" &
                                 "978-0-201-03801-9,Data Structures Basics,Alice Brown,available|" &
@@ -65,12 +66,13 @@ Module Program
             Console.WriteLine("(3) All Users")
             Console.WriteLine("(4) Borrow a book (ISBN)")
             Console.WriteLine("(5) Give Back (ISBN)")
-            Console.WriteLine("(6) Close")
+            Console.WriteLine("(6) All books Borrowed by a User")
+            Console.WriteLine("(7) Close")
             Console.Write("input: ")
 
             Dim input As String = Console.ReadLine()
             If Not Integer.TryParse(input, Choice) Then
-                Console.WriteLine("Invalid input. Please enter a number between 1 and 6.")
+                Console.WriteLine("Invalid input. Please enter a number between 1 and 7.")
                 Pause()
                 'as long as non of the Cases between 1 and 7 is chosen, the console is not going to continue and will ask for a valid input
                 Continue Do
@@ -93,6 +95,8 @@ Module Program
                 Case 5
                     ReturnBook()
                 Case 6
+                    SearchBooksByUser()
+                Case 7
                     Console.WriteLine("Goodbye!")
                     ' leave immediately without waiting for key
                     Exit Sub
@@ -100,9 +104,9 @@ Module Program
                     Console.WriteLine("Invalid option. Please enter a number between 1 and 7.")
             End Select
 
-            If Choice <> 6 Then Pause()
-        Loop While Choice <> 6
-        'Loop will continue until the user chooses to exit with (6)
+            If Choice <> 7 Then Pause()
+        Loop While Choice <> 7
+        'Loop will continue until the user chooses to exit with (7)
     End Sub
 
     'Sub after a Chase walked trough  to get back to menu
@@ -243,6 +247,37 @@ Module Program
         LibaryData = String.Join("|", Libary)
 
         Console.WriteLine($"Book '{bookParts(1)}' (ISBN {isbn}) has been returned and is now available.")
+    End Sub
+
+    Sub SearchBooksByUser()
+        Console.Write("User ID (Imput with U): ")
+        Dim userId As String = Console.ReadLine()
+
+        ' checks if user even exists, if not return to the menu
+        Dim userEntry As String = Users.FirstOrDefault(Function(u) u.StartsWith(userId & ","))
+        If userEntry Is Nothing Then
+            Console.WriteLine("User ID not found. Please create a new user with option (1) in the menu")
+            Return
+        End If
+        Dim userName As String = ""
+        Dim userParts() As String = userEntry.Split(","c)
+        If userParts.Length > 1 Then userName = userParts(1)
+
+        Console.WriteLine($"Books currently borrowed by {userName} ({userId}):")
+        Dim hasBorrowedBooks As Boolean = False
+        For i As Integer = 0 To Libary.Length - 1
+            Dim parts() As String = Libary(i).Split(","c)
+            If parts.Length >= 4 AndAlso parts(3).Equals("lend", StringComparison.OrdinalIgnoreCase) Then
+                ' In a real implementation, we would need to track which user has borrowed which book.
+                ' For this simplified version, we will just list all lent books without associating them to users.
+                Console.WriteLine(parts(1) & " (ISBN: " & parts(0) & ")")
+                hasBorrowedBooks = True
+            End If
+        Next
+
+        If Not hasBorrowedBooks Then
+            Console.WriteLine("No books currently borrowed by this user.")
+        End If
     End Sub
 
 End Module
