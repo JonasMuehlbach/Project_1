@@ -262,14 +262,12 @@ Module Program
         Dim userName As String = ""
         Dim userParts() As String = userEntry.Split(","c)
         If userParts.Length > 1 Then userName = userParts(1)
-
+        'Console outputs all the books that are currently borrewed by the User that got imputed.
         Console.WriteLine($"Books currently borrowed by {userName} ({userId}):")
         Dim hasBorrowedBooks As Boolean = False
         For i As Integer = 0 To Libary.Length - 1
             Dim parts() As String = Libary(i).Split(","c)
             If parts.Length >= 4 AndAlso parts(3).Equals("lend", StringComparison.OrdinalIgnoreCase) Then
-                ' In a real implementation, we would need to track which user has borrowed which book.
-                ' For this simplified version, we will just list all lent books without associating them to users.
                 Console.WriteLine(parts(1) & " (ISBN: " & parts(0) & ")")
                 hasBorrowedBooks = True
             End If
@@ -277,6 +275,7 @@ Module Program
 
         If Not hasBorrowedBooks Then
             Console.WriteLine("No books currently borrowed by this user.")
+            'if no book is borrowed by the user conole output that no book is borrowed
         End If
     End Sub
 
